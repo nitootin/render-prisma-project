@@ -13,12 +13,27 @@ app.post("/user", async (req, res) => {
     res.json(user);
 })
 
+app.get("/user/:id", async (req, res) => {
+    const {id} = req.params;
+    const user = await prisma.user.findUnique({where: {id: Number(id)}})
+
+    if(!user){
+        return res.status(404).json({error: "Usuario nao encontrado"})
+    }
+
+    res.json(user);
+});
+
 app.get("/users", async (req, res) => {
-
     const users = await prisma.user.findMany();
-
+ 
     res.json(users);
-})
+});
+
+app.get("/health", async (req, res) => {
+    res.status(200).json({status: "ok", uptime: process.uptime()})
+ 
+});
 
 app.listen(3000, () => {
     console.log("Server running on localhost:3000")
